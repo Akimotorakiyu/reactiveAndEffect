@@ -4,7 +4,8 @@ function isObject(value: unknown): value is object {
 
 type ObjectKey = string | number | symbol;
 
-let currentFn: () => void;
+let currentFn: (() => void) | null;
+
 const targetMap = new Map<Object, Map<ObjectKey, Set<() => void>>>();
 
 function effect(fn: () => void) {
@@ -27,8 +28,11 @@ function track<Target extends Object>(target: Target, key: ObjectKey) {
   if (!fnSet) {
     keyMap.set(key, (fnSet = new Set()));
   }
-
-  fnSet.add(currentFn);
+  if (currentFn) {
+    fnSet.add(currentFn);
+  } else {
+    throw "依赖收集时currentFn必须存在";
+  }
 }
 
 function trigger<Target extends Object>(target: Target, key: ObjectKey) {
@@ -43,14 +47,14 @@ function trigger<Target extends Object>(target: Target, key: ObjectKey) {
 function reactive<T extends Object>(target: T): T {
   const obsver = new Proxy(target, {
     get(target, key) {
-      const value = target[key];
+      const value = Reflect.get(target, key);
       track(target, key);
       return isObject(value) ? reactive(value) : value;
     },
     set(target, key, newValue) {
-      target[key] = newValue;
+      const result = Reflect.set(target, key, newValue);
       trigger(target, key);
-      return true;
+      return result;
     },
   });
 
