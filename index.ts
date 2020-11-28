@@ -28,11 +28,8 @@ function track<Target extends Object>(target: Target, key: ObjectKey) {
   if (!fnSet) {
     keyMap.set(key, (fnSet = new Set()));
   }
-  if (currentFn) {
-    fnSet.add(currentFn);
-  } else {
-    throw "依赖收集时currentFn必须存在";
-  }
+
+  fnSet.add(currentFn!);
 }
 
 function trigger<Target extends Object>(target: Target, key: ObjectKey) {
