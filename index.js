@@ -29,7 +29,7 @@ function track(target, key) {
     keyMap.set(key, (fnSet = new Set()));
   }
 
-  fnSet.add(currentFn!);
+  fnSet.add(currentFn);
 }
 
 function trigger(target, key) {
