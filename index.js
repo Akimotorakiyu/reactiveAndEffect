@@ -1,8 +1,6 @@
-function isObject(value){
+function isObject(value) {
   return value !== null && typeof value === "object";
 }
-
-
 
 let currentFn;
 
@@ -16,6 +14,24 @@ function effect(fn) {
   }
 
   runner();
+}
+
+function computed(fn) {
+  const temp = reactive({
+    value: null,
+  });
+
+  effect(() => {
+    temp.value = fn();
+  });
+
+  return temp;
+}
+
+function ref(value) {
+  return reactive({
+    value,
+  });
 }
 
 function track(target, key) {

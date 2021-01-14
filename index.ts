@@ -18,6 +18,24 @@ function effect(fn: () => void) {
   runner();
 }
 
+function computed<T>(fn: () => T) {
+  const temp = reactive({
+    value: (null as unknown) as T,
+  });
+
+  effect(() => {
+    temp.value = fn();
+  });
+
+  return temp;
+}
+
+function ref<T>(value: T) {
+  return reactive({
+    value,
+  });
+}
+
 function track<Target extends Object>(target: Target, key: ObjectKey) {
   let keyMap = targetMap.get(target);
   if (!keyMap) {
