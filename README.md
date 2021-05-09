@@ -1,6 +1,6 @@
 # Reactive & Effect
 
-lines < 75
+lines < 88
 
 ```sh
 yarn
